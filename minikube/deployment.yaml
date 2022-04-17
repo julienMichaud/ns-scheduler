@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ns-scheduler
+  labels:
+    app: ns-scheduler
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: ns-scheduler
+  template:
+    metadata:
+      labels:
+        app: ns-scheduler
+    spec:
+      serviceAccountName: ns-scheduler
+      containers:
+      - name: ns-scheduler
+        image: ns-scheduler:25
+        imagePullPolicy: Never
