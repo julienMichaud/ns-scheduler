@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: busybox-deployment
+  namespace: test-namespace
+  labels:
+    app: busybox
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: busybox
+  template:
+    metadata:
+      labels:
+        app: busybox
+    spec:
+      containers:
+      - name: busybox
+        image: spaster/alpine-sleep
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: test-namespace
+   annotations:
+    ns-scheduler: "true"

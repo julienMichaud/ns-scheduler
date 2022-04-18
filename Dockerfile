@@ -15,7 +15,7 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -o ns-scheduler .
+RUN CGO_ENABLED=0 go build -buildvcs=false -o ns-scheduler .
 
 
 FROM alpine:3.15.4

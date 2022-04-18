@@ -1,0 +1,3 @@
+originalReplicas setted to 0 instead of 2, might be a goroutine race and/or investiguate with mlock ?  // working with for range time.Tick(time.Second * 30) but should i use lock instead i think
+check that the "ns-scheduler-cron" is set, and compare it to current time, if it is (or past it) scale down components of namespace 
+add clean logging view instead of printf

@@ -19,5 +19,6 @@ func main() {
 	eng := engine.New(clientset)
 	ctx := context.Background()
 	go eng.Watcher(ctx)
+	go eng.Suspender(ctx)
 	select {}
 }

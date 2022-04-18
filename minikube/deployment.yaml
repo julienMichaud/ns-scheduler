@@ -18,5 +18,5 @@ spec:
       serviceAccountName: ns-scheduler
       containers:
       - name: ns-scheduler
-        image: ns-scheduler:25
-        imagePullPolicy: Never
+        image: ns-scheduler:1
+        imagePullPolicy: IfNotPresent
