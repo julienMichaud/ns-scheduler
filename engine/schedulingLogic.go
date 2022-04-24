@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"fmt"
@@ -31,26 +31,35 @@ func ConvertHourToDateFormat(scheduleUptime string) (firstDay int, lastDay int, 
 	return scheduleFirstDay, scheduleLastDay, StartScheduling, EndScheduling
 }
 
-func main() {
-	scheduleUptime := "1-6 14:45-15:30"
-
+func shouldScaleDown(upTime string) bool {
+	firstDay, lastDay, currentDateWithStartHour, currentDateWithStopHour := ConvertHourToDateFormat(upTime)
 	now := time.Now()
 	currentWeekDay := int(now.Weekday())
+	if currentWeekDay == 0 {
+		currentWeekDay = 7
+	}
 
-	startDay, EndDay, startScheduling, stopScheduling := ConvertHourToDateFormat(scheduleUptime)
-	fmt.Println(startScheduling)
-
-	if (currentWeekDay >= startDay) && (currentWeekDay <= EndDay) { //check if current date is in range specified above
+	if (currentWeekDay >= firstDay) && (currentWeekDay <= lastDay) { //check if current date is in range specified above
 		fmt.Printf("in range\n")
 
-		if (now.After(startScheduling)) && (now.Before(stopScheduling)) { //check if current hour is between start and stop, if not we should scale down
-			fmt.Printf("hour is between the start and stop given, resources should be up\n")
+		if (now.After(currentDateWithStartHour)) && (now.Before(currentDateWithStopHour)) { //check if current hour is between start and stop, if not we should scale down
+			fmt.Printf("date is between the start and stop given, resources should be up\n")
+			fmt.Println(currentWeekDay)
+			fmt.Println(now)
+			fmt.Println(currentDateWithStartHour)
+			fmt.Println(currentDateWithStopHour)
+			return false
 		} else {
-			fmt.Printf("not in scheduling range, we should scale down")
+			fmt.Printf("not in scheduling range, we should scale down\n")
+			fmt.Println(currentWeekDay)
+			fmt.Println(now)
+			fmt.Println(currentDateWithStartHour)
+			fmt.Println(currentDateWithStopHour)
+			return true
 		}
 
 	} else {
-		fmt.Printf("not in range")
+		fmt.Printf("not in range\n")
+		return true
 	}
-
 }

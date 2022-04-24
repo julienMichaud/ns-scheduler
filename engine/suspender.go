@@ -20,19 +20,15 @@ func (eng *Engine) Suspender(ctx context.Context) {
 
 		switch dState {
 		// if no annotation, we just set it
-		case "":
+		case "": //put everything under into a func
 			fmt.Printf("didnt see annotation ns-scheduler-state on the namespace %s, first time im seeing it then\n", n.ObjectMeta.Name)
 			if err := retry.RetryOnConflict(retry.DefaultRetry, func() error {
-				fmt.Printf("step 1, get namespac\n")
 				res, err := eng.client.CoreV1().Namespaces().Get(ctx, n.Name, metav1.GetOptions{})
 				if err != nil {
 					return err
 				}
-				// we set the annotation to running
-				fmt.Printf("step 2, setting namespace annotation to running\n")
 				res.Annotations["ns-scheduler/state"] = "Running"
 
-				fmt.Printf("step 3,updating namespace\n")
 				_, err = eng.client.CoreV1().Namespaces().Update(ctx, res, metav1.UpdateOptions{})
 				return err
 			}); err != nil {
@@ -40,26 +36,13 @@ func (eng *Engine) Suspender(ctx context.Context) {
 
 				continue
 			}
-		//if namespace annotation is Running, we scale down every deployment of it and set ns-scheduler/state to Suspended
+		//if namespace annotation is Running, check if the namespace resources should be up based on the upTime variable, if not we scale down resources
 		case "Running":
-			fmt.Printf("namespace annotation ns-scheduler/state is Running, will scale down every deployment of it and set ns-scheduler/state to Suspended\n")
-			res, err := eng.client.CoreV1().Namespaces().Get(ctx, n.Name, metav1.GetOptions{})
-			deployments, err := eng.client.AppsV1().Deployments(n.ObjectMeta.Name).List(ctx, metav1.ListOptions{})
-			if err != nil {
-				fmt.Printf("error retrieving deployments in namespace %s \n", err)
-			}
-			for _, dep := range deployments.Items {
-				fmt.Printf("will set replicas of deployment %s to 0 \n", dep.ObjectMeta.Name)
-
-				if err := patchDeploymentReplicas(ctx, eng.client, n.ObjectMeta.Name, dep.ObjectMeta.Name, "toto", 0); err != nil {
-					fmt.Printf("could not set replicas to 0 for deployment %s, error is %s \n", dep.ObjectMeta.Name, err)
-				}
-
-			}
-			res.Annotations["ns-scheduler/state"] = "Suspended"
-			_, err = eng.client.CoreV1().Namespaces().Update(ctx, res, metav1.UpdateOptions{})
-			if err != nil {
-				fmt.Printf("cannot update namespace annotation to suspensed for %s\n", n.ObjectMeta.Name)
+			if shouldScaleDown(eng.upTimeSchedule) {
+				fmt.Printf("namespace %s is in state 'Running' and is not in the upTime range specified, which mean that it should be scaled down.\n The state of the namespace will then be Suspended.\n", n.ObjectMeta.Name)
+				shuttingDownNamespace(eng, n, ctx)
+			} else {
+				fmt.Printf("namespace %s is in state 'Running' and is in the upTime range specified, not doing anything.\n", n.ObjectMeta.Name)
 			}
 
 		case "Suspended":

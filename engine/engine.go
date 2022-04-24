@@ -6,14 +6,16 @@ import (
 )
 
 type Engine struct {
-	client *kubernetes.Clientset
-	Wl     chan v1.Namespace
+	client         *kubernetes.Clientset
+	Wl             chan v1.Namespace
+	upTimeSchedule string
 }
 
-func New(cs *kubernetes.Clientset) *Engine {
+func New(cs *kubernetes.Clientset, upTimeSchedule string) *Engine {
 	e := Engine{
-		client: cs,
-		Wl:     make(chan v1.Namespace, 30),
+		client:         cs,
+		upTimeSchedule: upTimeSchedule,
+		Wl:             make(chan v1.Namespace, 30),
 	}
 	return &e
 }
