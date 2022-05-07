@@ -18,7 +18,7 @@ func main() {
 
 	eng := engine.New(
 		clientset,
-		"1-7 09:00-12:00")
+		"1-7 09:00-12:20")
 	ctx := context.Background()
 	go eng.Watcher(ctx)
 	go eng.Suspender(ctx)

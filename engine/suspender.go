@@ -46,7 +46,13 @@ func (eng *Engine) Suspender(ctx context.Context) {
 			}
 
 		case "Suspended":
-			fmt.Printf("namespace %s already suspended, not doing anything\n", n.ObjectMeta.Name)
+			fmt.Printf("namespace %s already suspended, checking if it should be revived\n", n.ObjectMeta.Name)
+			if shouldScaleDown(eng.upTimeSchedule) {
+				fmt.Printf("namespace %s still not in range, not doing anything.\n", n.ObjectMeta.Name)
+			} else {
+				fmt.Printf("namespace %s is in range, should be revived !.\n", n.ObjectMeta.Name)
+				startingUpNamespace(eng, n, ctx)
+			}
 		}
 
 	}

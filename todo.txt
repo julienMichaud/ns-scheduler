@@ -1,5 +1,5 @@
-gerer la partie state suspend => checker voir si heure est en dehors de uptime, si heure est dans uptime ressources du namespace doivent etre up (en recuperant annotation originalReplicas sur les deployments)
+avoir un vrai logging et arreter de faire des printF partout 
 gerer les erreurs pour les fichiers schedulingLogic et scaleDownNamespace (important)
 faire en sorte de pouvoir specifier uptime interval via variable d'env, override variable local 
 si uptimeInterval est specifie sur namespace, ca override variable local (ordre du plus fort au moins fort: annotation upTime sur namespace > variable d'env sur deployment ns-scheduler > variable par défaut)
-avoir un vrai logging et arreter de faire des printF partout 
+gerer les statefulset,cronjob/jobs 

@@ -20,6 +20,8 @@ RUN CGO_ENABLED=0 go build -buildvcs=false -o ns-scheduler .
 
 FROM alpine:3.15.4
 
+RUN apk add --no-cache tzdata
+
 WORKDIR /app
 
 COPY --from=builder /build/ns-scheduler .
