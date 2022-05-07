@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"ns-scheduler/engine"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -16,7 +15,7 @@ func main() {
 	}
 	clientset, err := kubernetes.NewForConfig(config)
 
-	eng := engine.New(
+	eng := New(
 		clientset,
 		"1-7 09:00-12:20")
 	ctx := context.Background()
