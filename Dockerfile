@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 go build -buildvcs=false -o ns-scheduler .
 
 FROM alpine:3.15.4
 
-RUN apk add --no-cache tzdata
+RUN apk add --no-cache tzdata && cp /usr/share/zoneinfo/Europe/Paris /etc/localtime && echo "Europe/Paris" > /etc/timezone
 
 WORKDIR /app
 

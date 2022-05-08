@@ -1,10 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 //ConvertHourToDateFormat take a scheduleUptime variable like "1-6 14:45-15:00" and return the first day (1) as int, the last day as int (6),the current date where the resources should start (2022-04-23 14:45:00 +0200 CEST) and the current date after which the resources should be stopped (2022-04-23 15:00:00 +0200 CEST)
@@ -31,35 +33,36 @@ func ConvertHourToDateFormat(scheduleUptime string, loc *time.Location) (firstDa
 	return scheduleFirstDay, scheduleLastDay, StartScheduling, EndScheduling
 }
 
-func shouldScaleDown(upTime string) bool {
+func shouldScaleDown(upTime string, logger *logrus.Logger) bool {
 	loc, _ := time.LoadLocation("Europe/Paris")
 	firstDay, lastDay, currentDateWithStartHour, currentDateWithStopHour := ConvertHourToDateFormat(upTime, loc)
 	now := time.Now().In(loc)
 	currentWeekDay := int(now.Weekday())
+
 	if currentWeekDay == 0 {
 		currentWeekDay = 7
 	}
+	contextLogger := logger.WithFields(log.Fields{
+		"currentWeekDay":           currentWeekDay,
+		"currentTime":              now,
+		"currentDateWithStartHour": currentDateWithStartHour,
+		"currentDateWithStopHour":  currentDateWithStopHour,
+	})
 
 	if (currentWeekDay >= firstDay) && (currentWeekDay <= lastDay) { //check if current date is in range specified above
 		// fmt.Printf("in range\n")
+		contextLogger.Debug("resources in between days given")
 
 		if (now.After(currentDateWithStartHour)) && (now.Before(currentDateWithStopHour)) { //check if current hour is between start and stop, if not we should scale down
-			// fmt.Printf("date is between the start and stop given, resources should be up\n")
-			// fmt.Println(currentWeekDay)
-			fmt.Println(now)
-			fmt.Println(currentDateWithStartHour)
-			fmt.Println(currentDateWithStopHour)
+			contextLogger.Debug("date is between the start and stop given, resources should be up")
 			return false
 		} else {
-			// fmt.Println(currentWeekDay)
-			fmt.Println(now)
-			fmt.Println(currentDateWithStartHour)
-			fmt.Println(currentDateWithStopHour)
+			contextLogger.Debug("date is NOT between the start and stop given, resources should be down")
 			return true
 		}
 
 	} else {
-		// fmt.Printf("not in range\n")
+		contextLogger.Debug("resources not in between days given")
 		return true
 	}
 }
