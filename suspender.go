@@ -11,7 +11,8 @@ import (
 func (eng *Engine) Suspender(ctx context.Context) {
 
 	contextLogger := eng.logger.WithFields(log.Fields{
-		"goRoutine": "Suspender",
+		"go-routine":      "Suspender",
+		"uptime-schedule": eng.upTimeSchedule,
 	})
 	contextLogger.Info("starting Suspender goroutine")
 
@@ -39,21 +40,36 @@ func (eng *Engine) Suspender(ctx context.Context) {
 			}
 		//if namespace annotation is Running, check if the namespace resources should be up based on the upTime variable, if not we scale down resources
 		case "Running":
-			if shouldScaleDown(eng.upTimeSchedule, &eng.logger) {
-				contextLogger.Infof("namespace %s is in state 'Running' and is not in the upTime range specified, which mean that it should be scaled down.\n The state of the namespace will then be Suspended.", n.ObjectMeta.Name)
-				shuttingDownNamespace(eng, n, ctx)
+
+			contextLogger.Infof("namespace %s in running state, checking if it should be scale downed", n.ObjectMeta.Name)
+			scaledown, err := shouldScaleDown(eng.upTimeSchedule, &eng.logger)
+			if err != nil {
+				contextLogger.Errorf("could not determine if we should scale down: %v", err)
+			}
+			if scaledown {
+				contextLogger.Infof("namespace %s not in the upTime range specified, which mean that it should be scaled down.\n The state of the namespace will then be Suspended.", n.ObjectMeta.Name)
+				if err := shuttingDownNamespace(eng, n, ctx); err != nil {
+					contextLogger.Errorf("could not shut namespace, error is %s", err)
+
+				}
 			} else {
-				contextLogger.Infof("namespace %s is in state 'Running' and is in the upTime range specified, not doing anything.", n.ObjectMeta.Name)
+				contextLogger.Infof("namespace %s is in the upTime range specified, not doing anything.", n.ObjectMeta.Name)
 			}
 
 		case "Suspended":
-			contextLogger.Infof("namespace %s already suspended, checking if it should be revived", n.ObjectMeta.Name)
 
-			if shouldScaleDown(eng.upTimeSchedule, &eng.logger) {
+			contextLogger.Infof("namespace %s already suspended, checking if it should be revived", n.ObjectMeta.Name)
+			scaledown, err := shouldScaleDown(eng.upTimeSchedule, &eng.logger)
+			if err != nil {
+				contextLogger.Errorf("could not determine if we should scale down: %v", err)
+			}
+			if scaledown {
 				contextLogger.Infof("namespace %s still not in range, not doing anything.", n.ObjectMeta.Name)
 			} else {
 				contextLogger.Infof("namespace %s is in range, should be revived !.", n.ObjectMeta.Name)
-				startingUpNamespace(eng, n, ctx)
+				if err := startingUpNamespace(eng, n, ctx); err != nil {
+					contextLogger.Errorf("could not start namespace, error is %s", err)
+				}
 			}
 		}
 

@@ -20,3 +20,6 @@ spec:
       - name: ns-scheduler
         image: ns-scheduler:1
         imagePullPolicy: IfNotPresent
+        env:
+        - name: UPTIME_SCHEDULE
+          value: "1-7 10:00-13:00"

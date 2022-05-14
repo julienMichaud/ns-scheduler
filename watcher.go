@@ -10,7 +10,8 @@ import (
 
 func (eng *Engine) Watcher(ctx context.Context) {
 	contextLogger := eng.logger.WithFields(log.Fields{
-		"goRoutine": "Watcher",
+		"go-routine":      "Watcher",
+		"uptime-schedule": eng.upTimeSchedule,
 	})
 	contextLogger.Info("starting Watcher goroutine")
 
