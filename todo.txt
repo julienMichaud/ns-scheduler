@@ -1,5 +1,5 @@
-si uptimeInterval est specifie sur namespace, ca override variable local (ordre du plus fort au moins fort: annotation upTime sur namespace > variable d'env sur deployment ns-scheduler > variable par défaut)
-gerer les statefulset,cronjob/jobs 
+gerer les statefulset
+refacto fichiers shuttindnamespace et startingnamespace, c'est le meme code
 faire des tests
 fichier schedulinglogic, refactorer fonctioner
 
