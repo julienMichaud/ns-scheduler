@@ -1,5 +1,3 @@
-gerer les statefulset
-refacto fichiers shuttindnamespace et startingnamespace, c'est le meme code
 faire des tests
 fichier schedulinglogic, refactorer fonctioner
 

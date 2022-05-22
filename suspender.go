@@ -59,7 +59,7 @@ func (eng *Engine) Suspender(ctx context.Context) {
 			}
 			if scaledown {
 				contextLogger.Infof("namespace %s not in the upTime range specified, which mean that it should be scaled down.\n The state of the namespace will then be Suspended.", n.ObjectMeta.Name)
-				if err := shuttingDownNamespace(eng, n, ctx); err != nil {
+				if err := handlingNamespace(eng, n, ctx, false); err != nil {
 					contextLogger.Errorf("error while scaling down namespace %s ressources, %s", n.ObjectMeta.Name, err)
 
 				}
@@ -78,7 +78,7 @@ func (eng *Engine) Suspender(ctx context.Context) {
 				contextLogger.Infof("namespace %s still not in range, not doing anything.", n.ObjectMeta.Name)
 			} else {
 				contextLogger.Infof("namespace %s is in range, should be revived !.", n.ObjectMeta.Name)
-				if err := startingUpNamespace(eng, n, ctx); err != nil {
+				if err := handlingNamespace(eng, n, ctx, true); err != nil {
 					contextLogger.Errorf("could not start namespace, error is %s", err)
 				}
 			}

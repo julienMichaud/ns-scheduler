@@ -25,6 +25,14 @@ rules:
   - list
   - update
 - apiGroups:
+  - "apps"
+  resources:
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - update
+- apiGroups:
   - "batch"
   resources:
   - cronjobs
