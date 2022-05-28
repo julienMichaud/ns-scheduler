@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,6 +15,7 @@ func (eng *Engine) Suspender(ctx context.Context) {
 		"go-routine": "Suspender",
 	})
 	contextLogger.Info("starting Suspender goroutine")
+	now := time.Now().In(eng.loc)
 
 	for {
 		n := <-eng.Wl
@@ -53,7 +55,7 @@ func (eng *Engine) Suspender(ctx context.Context) {
 		case "Running":
 
 			contextLogger.Infof("namespace %s in running state, checking if it should be scale downed", n.ObjectMeta.Name)
-			scaledown, err := shouldScaleDown(upTime, &eng.logger)
+			scaledown, err := shouldScaleDown(upTime, &eng.logger, now, eng.loc)
 			if err != nil {
 				contextLogger.Errorf("could not determine if we should scale down: %v", err)
 			}
@@ -70,7 +72,7 @@ func (eng *Engine) Suspender(ctx context.Context) {
 		case "Suspended":
 
 			contextLogger.Infof("namespace %s already suspended, checking if it should be revived", n.ObjectMeta.Name)
-			scaledown, err := shouldScaleDown(upTime, &eng.logger)
+			scaledown, err := shouldScaleDown(upTime, &eng.logger, now, eng.loc)
 			if err != nil {
 				contextLogger.Errorf("could not determine if we should scale down: %v", err)
 			}

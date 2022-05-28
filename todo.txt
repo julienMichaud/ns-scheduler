@@ -1,4 +1,4 @@
-faire des tests
+continuer tests sur fichier schedulinglogic, gerer si on recoit des errors
 fichier schedulinglogic, refactorer fonctioner
 
 
