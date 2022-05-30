@@ -16,6 +16,9 @@ func ConvertHourToDateFormat(scheduleUptime string, timeNow time.Time, loc *time
 	scheduleDaysandHoursSplitted := strings.Split(scheduleUptime, " ") // splitting 1-6 and 14:45-15:00
 
 	scheduleDays := scheduleDaysandHoursSplitted[0] //creating a string 1-6
+	if len(scheduleDays) != 3 {
+		return 0, 0, timeNow, timeNow, fmt.Errorf("days not in good format, want 3 got %v", len(scheduleDays))
+	}
 
 	scheduleFirstDay, err := strconv.Atoi(strings.Split(scheduleDays, "-")[0]) //converting 1 into an integer
 	if err != nil {
@@ -39,8 +42,14 @@ func ConvertHourToDateFormat(scheduleUptime string, timeNow time.Time, loc *time
 		return 0, 0, timeNow, timeNow, fmt.Errorf("first day cannot be higher than last day, got %d but lastday is %d", scheduleFirstDay, scheduleLastDay)
 	}
 	scheduleHours := scheduleDaysandHoursSplitted[1] // creating a string 14:45-15:00
+	if len(scheduleHours) != 11 {
+		return 0, 0, timeNow, timeNow, fmt.Errorf("scheduleHours hour not in good format, want 11 got %v", len(scheduleHours))
+	}
 
 	scheduleStart := strings.Split(scheduleHours, "-")[0] //creating a string 14:45
+	if len(scheduleStart) != 5 {
+		return 0, 0, timeNow, timeNow, fmt.Errorf("scheduleStart hour not in good format, want 5 got %v", len(scheduleStart))
+	}
 
 	scheduleStartHour, err := strconv.Atoi(strings.Split(scheduleStart, ":")[0]) // converting 14 into an integer
 	if err != nil {
@@ -53,6 +62,9 @@ func ConvertHourToDateFormat(scheduleUptime string, timeNow time.Time, loc *time
 	}
 
 	scheduleEnd := strings.Split(scheduleHours, "-")[1] //creating a string 15:00
+	if len(scheduleEnd) != 5 {
+		return 0, 0, timeNow, timeNow, fmt.Errorf("scheduleEnd hour not in good format, want 5 got %v", len(scheduleStart))
+	}
 
 	scheduleEndHour, err := strconv.Atoi(strings.Split(scheduleEnd, ":")[0]) // converting 15 into an integer
 	if err != nil {
