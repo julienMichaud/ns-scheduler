@@ -8,7 +8,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (eng *Engine) Watcher(ctx context.Context) {
+func (eng *Engine) Watcher(ctx context.Context) error {
 	contextLogger := eng.logger.WithFields(log.Fields{
 		"go-routine":      "Watcher",
 		"uptime-schedule": eng.upTimeSchedule,
@@ -19,6 +19,7 @@ func (eng *Engine) Watcher(ctx context.Context) {
 		ns, err := eng.client.CoreV1().Namespaces().List(ctx, metav1.ListOptions{}) // TODO: think about adding a label to filter here
 		if err != nil {
 			contextLogger.Errorf("cannot list namespace,%s", err)
+			return err
 		}
 
 		for _, n := range ns.Items {
@@ -34,4 +35,5 @@ func (eng *Engine) Watcher(ctx context.Context) {
 			}
 		}
 	}
+	return nil
 }

@@ -9,14 +9,14 @@ import (
 )
 
 type Engine struct {
-	client         *kubernetes.Clientset
+	client         kubernetes.Interface
 	Wl             chan v1.Namespace
 	upTimeSchedule string
 	logger         logrus.Logger
 	loc            *time.Location
 }
 
-func New(cs *kubernetes.Clientset, upTimeSchedule string, log logrus.Logger) *Engine {
+func New(cs kubernetes.Interface, upTimeSchedule string, log logrus.Logger) *Engine {
 	loc, _ := time.LoadLocation("Europe/Paris")
 	e := Engine{
 		client:         cs,

@@ -1,4 +1,4 @@
-continuer tests sur fichier schedulinglogic, gerer si on recoit des errors
+test statefulset a faire 
 fichier schedulinglogic, refactorer fonctioner
 
 
