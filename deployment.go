@@ -13,7 +13,7 @@ import (
 func int32Ptr(i int32) *int32 { return &i }
 
 // patchDeploymentReplicas updates the number of replicas of a given deployment
-func patchDeploymentReplicas(ctx context.Context, cs *kubernetes.Clientset, ns, d string, scalingUp bool) error {
+func patchDeploymentReplicas(ctx context.Context, cs kubernetes.Interface, ns, d string, scalingUp bool) error {
 	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		result, err := cs.AppsV1().Deployments(ns).Get(ctx, d, metav1.GetOptions{})
 		if err != nil {

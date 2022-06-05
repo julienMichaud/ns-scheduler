@@ -11,7 +11,7 @@ import (
 func boolFunc(i bool) *bool { return &i }
 
 // patchCronjob disable a given cronjob
-func patchCronjob(ctx context.Context, cs *kubernetes.Clientset, ns, d string, scalingUp bool) error {
+func patchCronjob(ctx context.Context, cs kubernetes.Interface, ns, d string, scalingUp bool) error {
 	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
 
 		result, err := cs.BatchV1().CronJobs(ns).Get(ctx, d, metav1.GetOptions{})

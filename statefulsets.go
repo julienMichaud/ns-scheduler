@@ -11,7 +11,7 @@ import (
 )
 
 // patchDeploymentReplicas updates the number of replicas of a given deployment
-func patchStatefulSetsReplicas(ctx context.Context, cs *kubernetes.Clientset, ns, d string, scalingUp bool) error {
+func patchStatefulSetsReplicas(ctx context.Context, cs kubernetes.Interface, ns, d string, scalingUp bool) error {
 	return retry.RetryOnConflict(retry.DefaultRetry, func() error {
 		result, err := cs.AppsV1().StatefulSets(ns).Get(ctx, d, metav1.GetOptions{})
 		if err != nil {
