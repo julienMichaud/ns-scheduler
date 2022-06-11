@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
@@ -40,8 +43,33 @@ func main() {
 		*log)
 
 	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
 
-	go eng.Watcher(ctx)
-	go eng.Suspender(ctx)
-	select {}
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+
+	go func() {
+		err := eng.Watcher(ctx, wg)
+		if err != nil {
+			cancel()
+		}
+	}()
+
+	go func() {
+		err := eng.Suspender(ctx, wg)
+		if err != nil {
+			cancel()
+		}
+	}()
+
+	<-done // wait for SIGINT / SIGTERM
+	log.Print("receive shutdown")
+	cancel()
+	wg.Wait()
+
+	log.Print("controller exited properly")
+
 }

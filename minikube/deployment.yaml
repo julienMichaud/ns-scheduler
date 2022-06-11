@@ -16,9 +16,10 @@ spec:
         app: ns-scheduler
     spec:
       serviceAccountName: ns-scheduler
+      terminationGracePeriodSeconds: 60
       containers:
       - name: ns-scheduler
-        image: ns-scheduler:1
+        image: ns-scheduler:2
         imagePullPolicy: IfNotPresent
         env:
         - name: UPTIME_SCHEDULE

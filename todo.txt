@@ -1,5 +1,7 @@
-test statefulset a faire 
-fichier schedulinglogic, refactorer fonctioner
+generer graceful shutdown du pod et donc de l'app (avec des contextes ?) 
+WATCHER SHUTDOWN NE MARCHE PAS, LE COTNEXT CANCEL NEST PAS RECUPERE ? 
+voir https://www.reddit.com/r/golang/comments/v9ts1q/how_to_test_a_func_that_never_end/
+https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
 
 
 une fois les tests faits
