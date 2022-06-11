@@ -9,21 +9,21 @@ import (
 	testclient "k8s.io/client-go/kubernetes/fake"
 )
 
-func CreatingStatefulSet(ctx context.Context, clientset *testclient.Clientset) (*appsv1.StatefulSet, error) {
-	statefulset := &appsv1.StatefulSet{
+func CreatingDeployment(ctx context.Context, clientset *testclient.Clientset) (*appsv1.Deployment, error) {
+	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "demo-statefulset",
+			Name:      "demo-deployment",
 			Namespace: "namespace",
 			Annotations: map[string]string{
 				"test": "test",
 			},
 		},
-		Spec: appsv1.StatefulSetSpec{
+		Spec: appsv1.DeploymentSpec{
 			Replicas: int32Ptr(2),
 		},
 	}
 
-	result, err := clientset.AppsV1().StatefulSets("namespace").Create(ctx, statefulset, metav1.CreateOptions{})
+	result, err := clientset.AppsV1().Deployments("namespace").Create(ctx, deployment, metav1.CreateOptions{})
 
 	if err != nil {
 		return nil, err
@@ -32,8 +32,8 @@ func CreatingStatefulSet(ctx context.Context, clientset *testclient.Clientset) (
 	return result, nil
 }
 
-func GetStatefulSet(ctx context.Context, clientset *testclient.Clientset) (*appsv1.StatefulSet, error) {
-	result, err := clientset.AppsV1().StatefulSets("namespace").Get(ctx, "demo-statefulset", metav1.GetOptions{})
+func GetDeployment(ctx context.Context, clientset *testclient.Clientset) (*appsv1.Deployment, error) {
+	result, err := clientset.AppsV1().Deployments("namespace").Get(ctx, "demo-deployment", metav1.GetOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -41,29 +41,30 @@ func GetStatefulSet(ctx context.Context, clientset *testclient.Clientset) (*apps
 	return result, nil
 }
 
-func CreatingStatefulSetResources(ctx context.Context, clientset *testclient.Clientset) error {
+func CreatingDeploymentResources(ctx context.Context, clientset *testclient.Clientset) error {
 
-	_, err := CreatingStatefulSet(ctx, clientset)
+	_, err := CreatingDeployment(ctx, clientset)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func TestStatefulsetsFunc(t *testing.T) {
+func TestDeploymentFunc(t *testing.T) {
 	ctx := context.Background()
 	clientset := testclient.NewSimpleClientset()
+
 	err := CreatingNamespace(ctx, clientset)
 	if err != nil {
 		t.Errorf("error creating resources, %s", err)
 	}
 
-	err = CreatingStatefulSetResources(ctx, clientset)
+	err = CreatingDeploymentResources(ctx, clientset)
 	if err != nil {
 		t.Errorf("error creating resources, %s", err)
 	}
 
-	statefulsetTestCases := []struct {
+	deploymentTestCases := []struct {
 		scalingUp            bool
 		wantReplicas         int32
 		wantSchedulerState   string
@@ -82,16 +83,16 @@ func TestStatefulsetsFunc(t *testing.T) {
 			wantOriginalReplicas: "2",
 		},
 	}
-	for _, tt := range statefulsetTestCases {
+	for _, tt := range deploymentTestCases {
 
-		err = patchStatefulSetsReplicas(ctx, clientset, "namespace", "demo-statefulset", tt.scalingUp)
+		err = patchDeploymentReplicas(ctx, clientset, "namespace", "demo-deployment", tt.scalingUp)
 		if err != nil {
-			t.Errorf("func statefulset return error %s", err)
+			t.Errorf("func deployment return error %s", err)
 		}
 
-		got, err := GetStatefulSet(ctx, clientset)
+		got, err := GetDeployment(ctx, clientset)
 		if err != nil {
-			t.Errorf("cannot get statefulset, %s", err)
+			t.Errorf("cannot get deployment, %s", err)
 		}
 
 		if *got.Spec.Replicas != tt.wantReplicas {
