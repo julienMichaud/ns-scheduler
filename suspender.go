@@ -91,6 +91,7 @@ func (eng *Engine) Suspender(ctx context.Context, wg *sync.WaitGroup) error {
 			// The context is over, stop processing results
 			contextLogger.Infof("goroutine Suspender canceled by context")
 			log.Printf("toto")
+			wg.Done()
 			return nil
 		}
 	}
