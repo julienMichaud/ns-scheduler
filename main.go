@@ -25,12 +25,12 @@ func main() {
 	var log = logrus.New()
 	upTimeSchedule := "1-7 08:00-20:00"
 
-	logLevel := os.Getenv("LOG_LEVEL")
+	logLevel := os.Getenv("NS_SCHEDULER_LOG_LEVEL")
 	if logLevel == "DEBUG" {
 		log.Level = logrus.DebugLevel
 	}
 
-	upTimeScheduleFromEnv := os.Getenv("UPTIME_SCHEDULE")
+	upTimeScheduleFromEnv := os.Getenv("NS_SCHEDULER_UPTIME_SCHEDULE")
 	if upTimeScheduleFromEnv != "" {
 		log.Debugf("got env variable upTimeScheduleFromEnv with value %s, using it instead of default", upTimeScheduleFromEnv)
 		upTimeSchedule = upTimeScheduleFromEnv

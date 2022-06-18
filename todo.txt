@@ -1,8 +1,6 @@
-generer graceful shutdown du pod et donc de l'app (avec des contextes ?) 
-WATCHER SHUTDOWN NE MARCHE PAS, LE COTNEXT CANCEL NEST PAS RECUPERE ? 
-voir https://www.reddit.com/r/golang/comments/v9ts1q/how_to_test_a_func_that_never_end/
-https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
-
+make it possible to change interval watcher go routine 
+make it possible to specify annotation on deployment/statefulset/cronjob to ignore ns scheduler even if namespace should be suspended
+make it possible to specify uptime on resource itself instead of on namespace ?  uptime resource > uptime namespace > uptime global
 
 une fois les tests faits
 

@@ -6,13 +6,13 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: nginx # doit correspondre à .spec.template.metadata.labels
+      app: nginx 
   serviceName: "nginx"
-  replicas: 3 # est 1 par défaut
+  replicas: 3
   template:
     metadata:
       labels:
-        app: nginx # doit correspondre à .spec.selector.matchLabels
+        app: nginx
     spec:
       terminationGracePeriodSeconds: 10
       containers:

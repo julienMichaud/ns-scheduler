@@ -11,7 +11,7 @@ import (
 func CreatingNamespace(ctx context.Context, clientset *testclient.Clientset) error {
 	nsSpec := &v1.Namespace{ObjectMeta: metav1.ObjectMeta{
 		Name:        "namespace",
-		Annotations: map[string]string{}}}
+		Annotations: map[string]string{"ns-scheduler": "true"}}}
 	_, err := clientset.CoreV1().Namespaces().Create(ctx, nsSpec, metav1.CreateOptions{})
 	if err != nil {
 		return err
