@@ -14,9 +14,10 @@ type Engine struct {
 	upTimeSchedule string
 	logger         logrus.Logger
 	loc            *time.Location
+	checkInterval  int
 }
 
-func New(cs kubernetes.Interface, upTimeSchedule string, log logrus.Logger) *Engine {
+func New(cs kubernetes.Interface, upTimeSchedule string, log logrus.Logger, intervalTime int) *Engine {
 	loc, _ := time.LoadLocation("Europe/Paris")
 	e := Engine{
 		client:         cs,
@@ -24,6 +25,7 @@ func New(cs kubernetes.Interface, upTimeSchedule string, log logrus.Logger) *Eng
 		Wl:             make(chan v1.Namespace, 30),
 		logger:         log,
 		loc:            loc,
+		checkInterval:  intervalTime,
 	}
 	return &e
 }

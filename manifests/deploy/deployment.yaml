@@ -24,3 +24,5 @@ spec:
         env:
         - name: NS_SCHEDULER_UPTIME_SCHEDULE
           value: "1-7 10:00-13:00"
+        - name: NS_SCHEDULER_CHECK_INTERVAL
+          value: "60"

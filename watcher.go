@@ -16,7 +16,7 @@ func (eng *Engine) Watcher(ctx context.Context, wg *sync.WaitGroup) error {
 	})
 	contextLogger.Info("starting Watcher goroutine")
 
-	ticker := time.NewTicker(time.Second * 30)
+	ticker := time.NewTicker(time.Second * time.Duration(eng.checkInterval))
 	for {
 		select {
 		case <-ctx.Done():

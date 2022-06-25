@@ -39,7 +39,7 @@ This controller can be splitted into 2 parts:
 
 #### The watcher
 
-The watcher function is charged to check every 30 seconds (TODO: make it possible to change the value) all the namespaces. When it found namespace that have the `ns-scheduler: true` annotation, it sends it to the suspender. 
+The watcher function is charged to check every 30 seconds (can be changed) all the namespaces. When it found namespace that have the `ns-scheduler: true` annotation, it sends it to the suspender. 
 
 #### The suspender
 
@@ -52,6 +52,7 @@ The suspender function does all the work of reading namespaces/resources annotat
 |---|---|---|
 | `NS_SCHEDULER_LOG_LEVEL`  | Level of verbosity of the controller  | ""  |
 | `NS_SCHEDULER_UPTIME_SCHEDULE`  | The default uptime schedule that the controller will use to scale up / scale down resources. During this interval, the controller will ensure that the resources are UP.  | `1-7 08:00-20:00`  |
+| `NS_SCHEDULER_CHECK_INTERVAL`  | Interval at which the Watcher function check new namespaces  | "30"  |
 ### Resources
 
 Currently supported resources are:

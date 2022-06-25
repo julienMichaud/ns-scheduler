@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 
@@ -24,6 +25,7 @@ func main() {
 	}
 	var log = logrus.New()
 	upTimeSchedule := "1-7 08:00-20:00"
+	checkInterval := 30 // 30 seconds by default
 
 	logLevel := os.Getenv("NS_SCHEDULER_LOG_LEVEL")
 	if logLevel == "DEBUG" {
@@ -34,13 +36,20 @@ func main() {
 	if upTimeScheduleFromEnv != "" {
 		log.Debugf("got env variable upTimeScheduleFromEnv with value %s, using it instead of default", upTimeScheduleFromEnv)
 		upTimeSchedule = upTimeScheduleFromEnv
+	}
 
+	checkIntervalFromEnv := os.Getenv("NS_SCHEDULER_CHECK_INTERVAL")
+	if checkIntervalFromEnv != "" {
+		log.Debugf("got env variable CheckIntervalFromEnv with value %s, using it instead of default", checkIntervalFromEnv)
+		i, _ := strconv.Atoi(checkIntervalFromEnv)
+		checkInterval = i
 	}
 
 	eng := New(
 		clientset,
 		upTimeSchedule,
-		*log)
+		*log,
+		checkInterval)
 
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
